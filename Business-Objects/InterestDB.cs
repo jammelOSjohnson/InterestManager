@@ -1,4 +1,5 @@
-﻿using MySql.Data.MySqlClient;
+﻿using InterestManager.Models;
+using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -9,17 +10,13 @@ using System.Windows.Forms;
 
 namespace InterestManager.Business_Objects
 {
-    public class Interest
+    public class InterestDB
     {
         //Variables
-        public int interest_id { get; set; }
-        public string ins_code { get; set; }
-        public decimal interest_rate { get; set; }
-        public DateTime effective_date { get; set; }
-        public int status_id { get; set; }
+        
 
         //Constructor
-        public Interest() { }
+        public InterestDB() { }
 
         public static MySqlConnection GetConnection()
         {
@@ -39,14 +36,13 @@ namespace InterestManager.Business_Objects
         public static void AddInterest(Interest interest)
         {
             //Configure Query
-            string query = "INSERT INTO interests VALUES(@interest_id, @ins_code, @interest_rate, @effective_date, @status_id)";
+            string query = "INSERT INTO interests VALUES(null,@ins_code, @interest_rate, @effective_date, @status_id)";
             MySqlConnection conn = GetConnection();
             MySqlCommand cmd = new MySqlCommand(query, conn);
             cmd.CommandType = CommandType.Text;
-            cmd.Parameters.Add("@interest_id", MySqlDbType.Int32).Value = interest.interest_id;
-            cmd.Parameters.Add("@ins_code", MySqlDbType.Int32).Value = interest.ins_code;
-            cmd.Parameters.Add("@interest_rate", MySqlDbType.Int32).Value = interest.interest_rate;
-            cmd.Parameters.Add("@effective_date", MySqlDbType.Int32).Value = interest.effective_date;
+            cmd.Parameters.Add("@ins_code", MySqlDbType.VarChar).Value = interest.ins_code;
+            cmd.Parameters.Add("@interest_rate", MySqlDbType.Decimal).Value = interest.interest_rate;
+            cmd.Parameters.Add("@effective_date", MySqlDbType.DateTime).Value = interest.effective_date;
             cmd.Parameters.Add("@status_id", MySqlDbType.Int32).Value = interest.status_id;
 
             try
@@ -75,9 +71,9 @@ namespace InterestManager.Business_Objects
             MySqlCommand cmd = new MySqlCommand(query, conn);
             cmd.CommandType = CommandType.Text;
             cmd.Parameters.Add("@interest_id", MySqlDbType.Int32).Value = interest_ID;
-            cmd.Parameters.Add("@ins_code", MySqlDbType.Int32).Value = interest.ins_code;
-            cmd.Parameters.Add("@interest_rate", MySqlDbType.Int32).Value = interest.interest_rate;
-            cmd.Parameters.Add("@effective_date", MySqlDbType.Int32).Value = interest.effective_date;
+            cmd.Parameters.Add("@ins_code", MySqlDbType.VarChar).Value = interest.ins_code;
+            cmd.Parameters.Add("@interest_rate", MySqlDbType.Decimal).Value = interest.interest_rate;
+            cmd.Parameters.Add("@effective_date", MySqlDbType.DateTime).Value = interest.effective_date;
             cmd.Parameters.Add("@status_id", MySqlDbType.Int32).Value = interest.status_id;
 
             try
@@ -120,13 +116,21 @@ namespace InterestManager.Business_Objects
 
         public static void DisplayAndFindInterests(string query, DataGridView dgv)
         {
-            string sql = query;
-            MySqlConnection conn = GetConnection();
-            MySqlCommand cmd = new MySqlCommand(query, conn);
-            MySqlDataAdapter adp = new MySqlDataAdapter(cmd);
-            DataTable dTbl = new DataTable();
-            adp.Fill(dTbl);
-            conn.Close();
+            try
+            {
+                MySqlConnection conn = GetConnection();
+                MySqlCommand cmd = new MySqlCommand(query, conn);
+                MySqlDataAdapter adp = new MySqlDataAdapter(cmd);
+                DataTable dTbl = new DataTable();
+                adp.Fill(dTbl);
+                dgv.DataSource = dTbl;
+                conn.Close();
+            }catch(MySqlException ex)
+            {
+                //If query failed
+                MessageBox.Show("Search Unavalable. \n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            
         }
 
     }

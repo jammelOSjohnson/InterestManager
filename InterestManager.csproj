@@ -89,15 +89,28 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Business-Objects\Interest.cs" />
+    <Compile Include="Business-Objects\DbConnector.cs" />
+    <Compile Include="Business-Objects\InstrumentsDB.cs" />
+    <Compile Include="Business-Objects\InterestDB.cs" />
+    <Compile Include="InterestForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="InterestForm.Designer.cs">
+      <DependentUpon>InterestForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Interests.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Interests.Designer.cs">
       <DependentUpon>Interests.cs</DependentUpon>
     </Compile>
+    <Compile Include="Models\Instrument.cs" />
+    <Compile Include="Models\Interest.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="InterestForm.resx">
+      <DependentUpon>InterestForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Interests.resx">
       <DependentUpon>Interests.cs</DependentUpon>
     </EmbeddedResource>
