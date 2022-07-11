@@ -15,11 +15,23 @@ namespace InterestManager
     public partial class InterestForm : Form
     {
         private readonly Interests _parent;
+        public int id;
+        public string Instrument, Status;
+        public DateTime PaymentDate;
+
         public InterestForm(Interests parent)
         {
             InitializeComponent();
             _parent = parent;
             Display();
+        }
+
+        public void UpdateInfo()
+        {
+            lbltext.Text = "Update Interest";
+            btnSave.Text = "Update";
+            menu_ins_code.SelectedItem = Instrument;
+            dpeff_date.Value = PaymentDate;
         }
 
         public InterestForm() 
@@ -59,6 +71,12 @@ namespace InterestManager
                 Interest interest = new Interest(0, menu_ins_code.SelectedValue.ToString(), Convert.ToDecimal(txtins_rate.Text.Trim()), dpeff_date.Value, 1);
                 InterestDB.AddInterest(interest);
                 Clear();
+            }
+
+            if(btnSave.Text == "Update")
+            {
+                Interest interest = new Interest(0, menu_ins_code.SelectedValue.ToString(), Convert.ToDecimal(txtins_rate.Text.Trim()), dpeff_date.Value, 1);
+                InterestDB.UpdateInterest(interest, id);
             }
             _parent.Display();
         }

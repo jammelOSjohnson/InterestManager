@@ -91,6 +91,33 @@ namespace InterestManager.Business_Objects
             conn.Close();
         }
 
+        public static void ApproveInterest(int status_id, int interest_ID)
+        {
+            //Configure Query
+            string query = "UPDATE interests SET" +
+                " status_id = @status_id " +
+                "WHERE interest_id = @interest_id";
+            MySqlConnection conn = GetConnection();
+            MySqlCommand cmd = new MySqlCommand(query, conn);
+            cmd.CommandType = CommandType.Text;
+            cmd.Parameters.Add("@interest_id", MySqlDbType.Int32).Value = interest_ID;
+            cmd.Parameters.Add("@status_id", MySqlDbType.Int32).Value = status_id;
+
+            try
+            {
+                //Run Query and show result
+                cmd.ExecuteNonQuery();
+                MessageBox.Show("Updated Successfully.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (MySqlException ex)
+            {
+                //If query failed
+                MessageBox.Show("Interest not updated. \n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            //Close connection
+            conn.Close();
+        }
+
         public static void DeleteInterest(int interest_ID)
         {
             string query = "DELETE FROM interests WHERE interest_id = @interest_id";

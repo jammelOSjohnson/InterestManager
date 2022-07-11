@@ -13,9 +13,11 @@ namespace InterestManager
 {
     public partial class Interests : Form
     {
+        InterestForm form;
         public Interests()
         {
             InitializeComponent();
+            form = new InterestForm(this);
         }
 
         public void Display()
@@ -29,8 +31,8 @@ namespace InterestManager
 
         private void btnNew_Click(object sender, EventArgs e)
         {
-            InterestForm Form = new InterestForm(this);
-            Form.ShowDialog();
+            form.Clear();
+            form.ShowDialog();
 
         }
 
@@ -48,6 +50,54 @@ namespace InterestManager
             + " WHERE instruments.description like '%"+ txtSearch.Text +"%'";
 
             InterestDB.DisplayAndFindInterests(query, dataGridView1);
+        }
+
+        private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if(e.ColumnIndex == 0)
+            {
+                //edit
+                form.Clear();
+                form.id = Convert.ToInt32(dataGridView1.Rows[e.RowIndex].Cells[5].Value.ToString());
+                form.Instrument = dataGridView1.Rows[e.RowIndex].Cells[6].Value.ToString();
+                form.PaymentDate = Convert.ToDateTime(dataGridView1.Rows[e.RowIndex].Cells[7].Value.ToString());
+                form.Status = dataGridView1.Rows[e.RowIndex].Cells[8].Value.ToString();
+                form.UpdateInfo();
+                form.ShowDialog();
+                return;
+            }
+
+            if(e.ColumnIndex == 1)
+            {
+                //delete
+                if(MessageBox.Show("Are you sure you want to delete?", "Information", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Information) == DialogResult.Yes){
+                    InterestDB.DeleteInterest(Convert.ToInt32(dataGridView1.Rows[e.RowIndex].Cells[5].Value.ToString()));
+                    Display();
+                }
+                return;
+            }
+
+            if (e.ColumnIndex == 2)
+            {
+                //Approve
+                if (MessageBox.Show("Are you sure you want to Approve?", "Information", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Information) == DialogResult.Yes)
+                {
+                    InterestDB.ApproveInterest(2 ,Convert.ToInt32(dataGridView1.Rows[e.RowIndex].Cells[5].Value.ToString()));
+                    Display();
+                }
+                return;
+            }
+
+            if (e.ColumnIndex == 3)
+            {
+                //Approve
+                if (MessageBox.Show("Are you sure you want to Cancel?", "Information", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Information) == DialogResult.Yes)
+                {
+                    InterestDB.ApproveInterest(3, Convert.ToInt32(dataGridView1.Rows[e.RowIndex].Cells[5].Value.ToString()));
+                    Display();
+                }
+                return;
+            }
         }
     }
 }
